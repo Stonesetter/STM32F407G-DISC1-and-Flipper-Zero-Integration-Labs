@@ -1,0 +1,15 @@
+# Flipper Zero Application Manifest
+# This will be configured when we build Project 5
+# Built with ufbt (micro Flipper Build Tool)
+
+App(
+    appid="stm32_controller",
+    name="STM32 Controller",
+    apptype=FlipperAppType.EXTERNAL,
+    entry_point="stm32_controller_app",
+    requires=["gui"],
+    stack_size=2 * 1024,
+    fap_icon="icon.png",
+    fap_category="GPIO",
+    fap_description="Control and monitor an STM32F407G Discovery board over UART/SPI",
+)

@@ -1,0 +1,36 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug STM32 (ST-Link)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/flipper_stm32_labs.elf",
+            "cwd": "${workspaceFolder}",
+            "MIMode": "gdb",
+            "miDebuggerPath": "C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/arm-none-eabi-gdb.exe",
+            "miDebuggerServerAddress": "localhost:3333",
+            "setupCommands": [
+                {"text": "target remote localhost:3333"},
+                {"text": "monitor reset halt"},
+                {"text": "load"},
+                {"text": "monitor reset init"}
+            ],
+            "preLaunchTask": "Build",
+            "postDebugTask": "",
+            "logging": {
+                "engineLogging": false
+            }
+        },
+        {
+            "name": "Flash Only (no debug)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/flipper_stm32_labs.elf",
+            "cwd": "${workspaceFolder}",
+            "MIMode": "gdb",
+            "miDebuggerPath": "C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/arm-none-eabi-gdb.exe",
+            "preLaunchTask": "Flash"
+        }
+    ]
+}
