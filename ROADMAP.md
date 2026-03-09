@@ -24,21 +24,22 @@ Each builds on the skills from the previous one.
 - [x] Makefile build system + flash from VS Code
 
 ### Project 2: GPIO Remote Control
-- [ ] Design binary packet protocol (header, command, payload, checksum)
-- [ ] Implement packet send/receive on STM32
-- [ ] Individual GPIO pin control (set, clear, toggle, read)
-- [ ] Bidirectional — STM32 reports button state and pin readings
-- [ ] Test with Flipper USB-UART Bridge + PC terminal
+- [x] Design binary packet protocol (header, command, payload, checksum)
+- [x] Implement packet send/receive on STM32
+- [x] Individual GPIO pin control (set, clear, toggle, read)
+- [x] Bidirectional — STM32 reports button state and pin readings
+- [x] Text command fallback for PuTTY testing
+- [~] Test with Flipper USB-UART Bridge + PC terminal
 
 ## Phase 2: Peripherals (Projects 3-4)
 
 ### Project 3: ADC Sensor Dashboard
-- [ ] Configure ADC for onboard temperature sensor
-- [ ] Add support for external analog input (PA1 or similar)
-- [ ] Implement periodic sampling with timer
-- [ ] Stream formatted readings over UART
-- [ ] Add start/stop/rate commands
-- [ ] Test live data monitoring from PC terminal
+- [x] Configure ADC for onboard temperature sensor
+- [x] Add support for external analog input (PA1)
+- [x] Implement periodic sampling with configurable interval
+- [x] Stream formatted readings over UART (CSV-like format)
+- [x] Add start/stop/rate/single/status commands
+- [~] Test live data monitoring from PC terminal
 
 ### Project 4: SPI Communication Link
 - [ ] Design SPI wiring between boards (MOSI, MISO, SCK, CS)

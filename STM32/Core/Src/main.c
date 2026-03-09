@@ -38,9 +38,9 @@ volatile uint8_t mode_reset_requested = 0;
 
 /* ---- Forward declarations: mode entry points ---- */
 extern void mode1_run(void);
-/* extern void mode2_run(void);  — uncomment as modes are built */
-/* extern void mode3_run(void); */
-/* extern void mode4_run(void); */
+extern void mode2_run(void);
+extern void mode3_run(void);
+/* extern void mode4_run(void);  — uncomment as modes are built */
 /* extern void mode5_run(void); */
 
 /* ---- Private function prototypes ---- */
@@ -120,16 +120,16 @@ static uint8_t run_menu(void) {
             if (menu_rx_byte >= '1' && menu_rx_byte <= '0' + NUM_MODES) {
                 uint8_t choice = menu_rx_byte - '1';
                 /* Check if this mode is implemented */
-                if (choice == 0) {
+                if (choice <= 2) {
                     return choice;
                 } else {
                     uart_printf("\r\n  Mode %d is not yet implemented.\r\n", choice + 1);
-                    uart_print("  Only Mode 1 is available right now.\r\n");
+                    uart_print("  Modes 1-3 are available.\r\n");
                     print_menu(selected);
                 }
             } else if (menu_rx_byte == '\r' || menu_rx_byte == '\n') {
                 /* Enter key — select current highlighted mode */
-                if (selected == 0) {
+                if (selected <= 2) {
                     return selected;
                 } else {
                     uart_printf("\r\n  Mode %d is not yet implemented.\r\n", selected + 1);
@@ -152,7 +152,7 @@ static uint8_t run_menu(void) {
 
             if (held > 1000) {
                 /* Long press — confirm selection */
-                if (selected == 0) {
+                if (selected <= 2) {
                     return selected;
                 } else {
                     uart_printf("\r\n  Mode %d not yet implemented.\r\n", selected + 1);
@@ -198,13 +198,13 @@ int main(void) {
             case 0:
                 mode1_run();
                 break;
-            /*
             case 1:
                 mode2_run();
                 break;
             case 2:
                 mode3_run();
                 break;
+            /*
             case 3:
                 mode4_run();
                 break;

@@ -188,4 +188,174 @@ revisit interrupts later when we need higher performance (Mode 4: SPI).
 
 ---
 
+## Entry 4 — Project 2: GPIO Remote Control
+
+**Date:** 2026-03-06
+**Status:** Code complete, needs hardware testing
+
+### What We Built
+
+A GPIO remote control system that lets you control the STM32's LEDs and read
+the USER button from a remote terminal. The big new concept here is **dual
+protocol support** — the same mode accepts both human-readable text commands
+AND a binary packet protocol.
+
+### Why Two Protocols?
+
+In the real world, embedded devices often need to talk to both humans and
+machines. Think about it:
+- **Text protocol** — Great for debugging, manual testing, and development.
+  You open a serial terminal and type commands. Easy to understand and test.
+- **Binary protocol** — What real devices use to talk to each other. Compact
+  (5 bytes vs ~20 chars), fast to parse (no string comparison), and includes
+  error detection (checksums).
+
+Mode 2 auto-detects which protocol is being used: if the first byte is `0xAA`,
+it treats the incoming data as a binary packet. Otherwise, it's a text command.
+
+### The Binary Packet Protocol
+
+```
+  Request:  [0xAA] [CMD] [PIN] [VALUE] [CHECKSUM]
+  Response: [0xBB] [STATUS] [PIN] [VALUE] [CHECKSUM]
+```
+
+This 5-byte packet format teaches several important concepts:
+
+1. **Header byte (0xAA)** — Also called a "magic number" or "sync byte." It
+   marks the start of a packet. Without it, the receiver wouldn't know where
+   one message ends and the next begins. The value 0xAA (10101010 in binary)
+   is common because it creates a distinctive alternating pattern.
+
+2. **Command byte** — Encodes what action to take. Using a single byte instead
+   of a text string ("set", "toggle") saves bandwidth and parsing time.
+
+3. **Checksum** — XOR of all preceding bytes. This catches transmission errors.
+   If a byte gets corrupted during transmission, the checksum won't match and
+   the STM32 rejects the packet. Real protocols use CRC for better detection,
+   but XOR is simple and teaches the concept.
+
+### Pin Mapping
+
+| ID | Hardware | Notes |
+|----|----------|-------|
+| 0 | PD12 Green LED | Output |
+| 1 | PD13 Orange LED | Output |
+| 2 | PD14 Red LED | Output |
+| 3 | PD15 Blue LED | Output |
+| 4 | PA0 USER Button | Input, read-only |
+
+### New Concepts
+
+| Concept | Explanation |
+|---------|------------|
+| Binary protocol | Sending raw bytes instead of text — compact and machine-friendly |
+| Sync/Header byte | A known byte value that marks the start of a packet |
+| XOR checksum | Simple error detection — XOR all bytes, compare with expected |
+| Pin abstraction | Using a struct array to map pin IDs to hardware, making the code generic |
+| Dual protocol | Accepting both text and binary input on the same channel |
+| Bitmask | Using individual bits to represent multiple pin states in one byte (READ_ALL) |
+
+### Testing Plan
+
+1. Flash firmware (`make flash` or VS Code Flash task)
+2. Start Flipper UART Bridge, open PuTTY on the Flipper's COM port
+3. Select Mode 2 from boot menu (press '2')
+4. Test text commands: `help`, `set green on`, `toggle blue`, `read button`, `status`
+5. Press the USER button and run `read button` to verify it reads HIGH
+6. Type `reset` to return to menu
+
+---
+
+## Entry 5 — Project 3: ADC Sensor Dashboard
+
+**Date:** 2026-03-06
+**Status:** Code complete, needs hardware testing
+
+### What We Built
+
+A sensor dashboard that reads analog signals and streams them over UART.
+It reads two channels: the STM32's **internal temperature sensor** (no wiring
+needed!) and an **external analog input on PA1** (optional potentiometer).
+
+### Key Concept: ADC (Analog-to-Digital Converter)
+
+This is a big one for hardware engineering. The real world is analog — voltage,
+temperature, pressure, light, sound are all continuous signals. But a processor
+only understands digital numbers (0s and 1s). The ADC bridges this gap.
+
+**How it works:**
+- The ADC measures a voltage on a pin (0V to 3.3V on the STM32)
+- It converts that voltage to a number: 0 = 0V, 4095 = 3.3V (12-bit resolution)
+- 12-bit means 2^12 = 4096 possible values
+- Resolution: 3.3V / 4096 = 0.0008V (0.8mV) per step — pretty precise!
+
+**Why 12-bit?** More bits = more precision. An 8-bit ADC would only give 256
+steps (12.9mV resolution). The STM32F407 has a 12-bit ADC, which is standard
+for most microcontrollers. High-end audio/measurement systems use 16-bit or
+even 24-bit ADCs.
+
+### Internal Temperature Sensor
+
+The STM32 has a temperature sensor built right into the chip die. It's connected
+to ADC channel 18 (not a physical pin — it's internal).
+
+**Conversion formula (from the STM32F407 datasheet):**
+```
+V_sense = (ADC_raw / 4095) * 3.3V
+Temperature(C) = ((0.76V - V_sense) / 0.0025) + 25
+```
+
+The numbers 0.76V and 0.0025 come straight from the datasheet — they're
+calibration values specific to this chip family. In production, you'd use
+factory calibration values stored in flash for better accuracy.
+
+Note: this reads the **die** temperature (the chip itself), not room temperature.
+It'll typically read a few degrees higher than ambient because the chip generates heat.
+
+### External Analog Input
+
+PA1 is configured as an analog input. You can connect anything that produces
+a 0-3.3V signal:
+- **Potentiometer** — the simplest test. Turn the knob, watch the voltage change
+- **Light sensor (LDR)** — voltage varies with brightness
+- **Flex sensor** — voltage varies with bending
+- Or leave it disconnected — it'll read random floating noise (fun to watch!)
+
+### Sampling and Streaming
+
+The mode uses **polling-based** ADC reads — when it's time to sample, it:
+1. Configures the ADC for the temperature channel
+2. Starts conversion, waits for completion, reads the value
+3. Reconfigures for the PA1 channel
+4. Starts conversion, waits, reads
+5. Formats both readings into a CSV-like string and sends over UART
+
+The `rate` command controls how often this happens (50ms to 10000ms).
+
+### New Concepts
+
+| Concept | Explanation |
+|---------|------------|
+| ADC | Converts analog voltages to digital numbers |
+| 12-bit resolution | 4096 discrete levels between 0V and 3.3V |
+| ADC channel | Which input the ADC reads (pin or internal sensor) |
+| Sample time | How long the ADC measures before converting — longer = more accurate |
+| Internal temp sensor | Temperature sensor built into the chip die, no wiring needed |
+| Analog input mode | GPIO pin configured to read voltage instead of digital HIGH/LOW |
+| Streaming protocol | Continuously sending data at a set interval (vs request/response) |
+
+### Testing Plan
+
+1. Flash firmware (you'll do this yourself this time!)
+2. Start Flipper UART Bridge, open PuTTY
+3. Select Mode 3 from boot menu (press '3')
+4. It shows an initial reading right away
+5. Try: `help`, `single`, `start`, `stop`, `rate 200`, `status`
+6. Watch the temperature reading — it should be roughly room temp (maybe a bit higher)
+7. If you have a potentiometer, connect it to PA1 and watch EXT change as you turn it
+8. Type `reset` to return to menu
+
+---
+
 *Future entries will be added as we complete each project.*
