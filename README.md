@@ -40,7 +40,8 @@ Zero app that controls the STM32.
 - (Project 3) A potentiometer or analog sensor (optional — onboard temp sensor works too)
 
 ### Software
-- [STM32CubeIDE](https://www.st.com/en/development-tools/stm32cubeide.html) (free)
+- [STM32CubeIDE](https://www.st.com/en/development-tools/stm32cubeide.html) (free) <---- I used v.1.19.0!!!!!
+- >>**Special Note: If using STM32CubeIDE v.2.0.0 (possibly later) you need to install STM32CubeMX stand alone if you want to use it to build your driver).
 - A serial terminal: PuTTY (Windows), minicom, or screen (Linux/Mac)
 - (Project 5) [Flipper Zero firmware SDK / ufbt](https://github.com/flipperdevices/flipperzero-ufbt) for building custom apps
 
