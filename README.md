@@ -1,5 +1,29 @@
 # Flipper Zero + STM32F407G Discovery: Integration Labs
 
+<table align="center">
+  <tr>
+    <td align="center"><a href="assets/Connections.JPG"><img src="assets/AllLights.png" width="200"></a></td>
+    <td><em>3-wire UART setup between the Flipper Zero and STM32 Discovery board</em></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="assets/DevMan.png"><img src="assets/DevMan.png" width="200"></a></td>
+    <td><em>Device Manager showing COM7 and COM8 ports for the Flipper USB-UART bridge</em></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="assets/Putty1.png"><img src="assets/Putty1.png" width="200"></a></td>
+    <td><em>Setting up two PuTTY terminals for UART communication</em></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="assets/puttyCLI.JPG"><img src="assets/puttyCLI.JPG" width="200"></a></td>
+    <td><em>The multi-mode boot menu as seen from PuTTY</em></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="assets/AllLights.JPG"><img src="assets/AllLights.png" width="200"></a></td>
+    <td><em>All four LEDs lit up after sending CLI commands over UART</em></td>
+  </tr>
+</table>
+
+
 A collection of 5 progressive projects that connect a **Flipper Zero** and an
 **STM32F407G-DISC1 Discovery board** together. Each project builds on the last,
 taking you from basic UART communication all the way to writing a custom Flipper
