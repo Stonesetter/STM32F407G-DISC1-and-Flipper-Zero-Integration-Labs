@@ -2,7 +2,7 @@
 
 <table align="center">
   <tr>
-    <td align="center"><a href="assets/Connections.JPG"><img src="assets/AllLights.png" width="200"></a></td>
+    <td align="center"><a href="assets/Connections.JPG"><img src="assets/Connections.JPG" width="200"></a></td>
     <td><em>3-wire UART setup between the Flipper Zero and STM32 Discovery board</em></td>
   </tr>
   <tr>
@@ -14,11 +14,11 @@
     <td><em>Setting up two PuTTY terminals for UART communication</em></td>
   </tr>
   <tr>
-    <td align="center"><a href="assets/puttyCLI.JPG"><img src="assets/puttyCLI.JPG" width="200"></a></td>
+    <td align="center"><a href="assets/puttyCLI.png"><img src="assets/puttyCLI.png" width="200"></a></td>
     <td><em>The multi-mode boot menu as seen from PuTTY</em></td>
   </tr>
   <tr>
-    <td align="center"><a href="assets/AllLights.JPG"><img src="assets/AllLights.png" width="200"></a></td>
+    <td align="center"><a href="assets/AllLights.JPG"><img src="assets/AllLights.JPG" width="200"></a></td>
     <td><em>All four LEDs lit up after sending CLI commands over UART</em></td>
   </tr>
 </table>
